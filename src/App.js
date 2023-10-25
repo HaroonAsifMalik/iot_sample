@@ -1,9 +1,8 @@
-import "./App.css";
 import React, { useState } from "react";
-import ElementContainer from "./components/ElementContainer";
-import DropArea from "./components/DropArea";
 import { DndContext } from "@dnd-kit/core";
+import Elements from "./components/Elements";
 import Droppable from "./components/Droppable";
+import Draggable from "./components/Draggable";
 
 const testData = [
   { id: 1, text: "A" },
@@ -14,29 +13,40 @@ const testData = [
 ];
 
 function App() {
-  const [isDropped, setIsDropped] = useState(false);
-
-  function handleDragEnd(event) {
-    console.log("handleDragEnd called", event);
-
-    if (event.over && event.over.id === "drop-area") {
-      setIsDropped(true);
-    }
-  }
+  const [parent, setParent] = useState(null);
 
   return (
-    <div className="flex h-screen bg-red-200">
-      <DndContext onDragEnd={handleDragEnd}>
-        <div className="w-1/4 p-2">
-          <ElementContainer testData={testData} />
-        </div>
-        <div className="w-full p-2 bg-red-300 h-screen ">
-          <Droppable id="drop-area">
-            <DropArea />
-          </Droppable>
-        </div>
-      </DndContext>
-    </div>
+    <DndContext onDragEnd={handleDragEnd}>
+      {testData.map((element) => (
+        <Draggable key={element.id} id={element.id}>
+          <Elements text={element.text} />
+        </Draggable>
+      ))}
+
+      {testData.map((element) => (
+        <Droppable key={element.id} id={element.id}>
+          {parent === element.id ? (
+            <Elements text={element.text} />
+          ) : (
+            "Drop here"
+          )}
+        </Droppable>
+      ))}
+    </DndContext>
   );
+
+  function handleDragEnd(event) {
+    const { over, active } = event;
+
+    // If the item is dropped over a container, set it as the parent
+    if (over) {
+      setParent(over.id);
+    }
+    // If the item is dragged back to its original position, reset the parent
+    if (active && active.id === parent) {
+      setParent(null);
+    }
+  }
 }
+
 export default App;

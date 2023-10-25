@@ -4,7 +4,7 @@ function Elements(props) {
   const { id, text } = props;
 
   return (
-    <div className="bg-red-100 justify-center flex mb-5 rounded-md">
+    <div className="bg-red-100 justify-center flex rounded-md">
       <h1>
         {text}
         {id}
