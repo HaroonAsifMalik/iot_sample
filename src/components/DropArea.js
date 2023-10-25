@@ -1,12 +1,20 @@
-import { DndContext } from "@dnd-kit/core";
 import React from "react";
-import Droppable from "./Droppable";
-function DropArea() {
+import { useDroppable } from "@dnd-kit/core";
+
+const combinedClassName = "w-full p-2 bg-red-300  text-2xl h-screen flex-left ";
+
+export default function DropArea({ children }) {
+  const { isOver, setNodeRef } = useDroppable({
+    id: "droppable",
+  });
+  const style = {
+    color: isOver ? "green" : undefined,
+  };
+
   return (
-    <div>
-      <h1>This is Right side</h1>
+    <div ref={setNodeRef} style={{ ...style }} className={combinedClassName}>
+      <h1 className="justify-center flex p-3 m-3">This is drop area</h1>
+      {children}
     </div>
   );
 }
-
-export default DropArea;

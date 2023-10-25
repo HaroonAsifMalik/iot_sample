@@ -1,53 +1,68 @@
 import React, { useState } from "react";
-import { DndContext } from "@dnd-kit/core";
-import Elements from "./components/Elements";
-import Droppable from "./components/Droppable";
-// import Draggable from "./components/Draggable";
+import { DndContext, useDraggable } from "@dnd-kit/core";
 import ElementContainer from "./components/ElementContainer";
 import DropArea from "./components/DropArea";
 
-const testData = [
-  { id: 1, text: "A" },
-  { id: 2, text: "B" },
-  { id: 3, text: "C" },
-  { id: 4, text: "D" },
-  { id: 5, text: "E" },
+//setting default position
+const position = {
+  x: 0,
+  y: 0,
+};
+
+//starting test data
+const notesData = [
+  {
+    id: 1,
+    content: "A",
+    position: { ...position },
+  },
+
+  {
+    id: 2,
+    content: "B",
+    position: { ...position },
+  },
+
+  {
+    id: 3,
+    content: "C",
+    position: { ...position },
+  },
+
+  {
+    id: 4,
+    content: "D",
+    position: { ...position },
+  },
+
+  {
+    id: 5,
+    content: "E",
+    position: { ...position },
+  },
 ];
 
-function App() {
-  const [parent, setParent] = useState(null);
+export default function App() {
+  const [notes, setNotes] = useState(notesData);
 
+  function handleDragEnd(ev) {
+    const note = notes.find((x) => x.id === ev.active.id);
+    //assiging new positions
+    note.position.x += ev.delta.x;
+    note.position.y += ev.delta.y;
+    //updates list
+    const _notes = notes.map((x) => {
+      if (x.id === note.id) return note;
+      return x;
+    });
+    setNotes(_notes);
+  }
   return (
     <div className="flex h-screen bg-green-300">
       <DndContext onDragEnd={handleDragEnd}>
-        <ElementContainer testData={testData} />
-
-        {testData.map((element) => (
-          <Droppable key={element.id} id={element.id}>
-            {parent === element.id ? (
-              <Elements text={element.text} id={element.id} />
-            ) : (
-              "Drop here"
-            )}
-            <DropArea />
-          </Droppable>
-        ))}
+        <ElementContainer notes={notes} />
+        <DropArea />
       </DndContext>
     </div>
   );
-
-  function handleDragEnd(event) {
-    const { over, active } = event;
-
-    // If the item is dropped over a container, set it as the parent
-    if (over) {
-      setParent(over.id);
-    }
-    // If the item is dragged back to its original position, reset the parent
-    if (active && active.id === parent) {
-      setParent(null);
-    }
-  }
 }
-
-export default App;

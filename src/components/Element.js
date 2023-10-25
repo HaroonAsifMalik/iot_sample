@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useDraggable } from "@dnd-kit/core";
 
-const combinedClassName = "bg-red-300 justify-center flex rounded-md p-3 m-3";
+const combinedClassName =
+  " bg-green-300 justify-center flex rounded-md p-3 m-2";
 
-export function Draggable({ id, content, styles }) {
+export default function Element({ note }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id,
+    id: note.id,
   });
 
   const style = transform
@@ -17,12 +18,17 @@ export function Draggable({ id, content, styles }) {
   return (
     <div
       ref={setNodeRef}
-      style={{ ...style, ...styles }}
+      style={{
+        ...style,
+        position: "relative",
+        left: note.position.x,
+        top: note.position.y,
+      }}
       className={combinedClassName}
       {...listeners}
       {...attributes}
     >
-      {content}
+      {note.content}
     </div>
   );
 }
