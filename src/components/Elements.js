@@ -1,24 +1,14 @@
-import { useDraggable } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
-// import { useDrag } from "react-dnd";
+// import Draggable from "./Draggable";
 
 function Elements(props) {
-  const { key, text } = props;
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: key,
-  });
+  const { id, text } = props;
 
   return (
-    <div
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      style={{
-        transform: CSS.Transform.toString(transform),
-      }}
-      className="bg-red-300 justify-center flex"
-    >
-      <h1>{text}</h1>
+    <div className="bg-red-100 justify-center flex mb-5 rounded-md">
+      <h1>
+        {text}
+        {id}
+      </h1>
     </div>
   );
 }
