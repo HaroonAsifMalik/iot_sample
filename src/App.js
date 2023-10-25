@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { DndContext } from "@dnd-kit/core";
 import Elements from "./components/Elements";
 import Droppable from "./components/Droppable";
-import Draggable from "./components/Draggable";
+// import Draggable from "./components/Draggable";
+import ElementContainer from "./components/ElementContainer";
+import DropArea from "./components/DropArea";
 
 const testData = [
   { id: 1, text: "A" },
@@ -16,23 +18,22 @@ function App() {
   const [parent, setParent] = useState(null);
 
   return (
-    <DndContext onDragEnd={handleDragEnd}>
-      {testData.map((element) => (
-        <Draggable key={element.id} id={element.id}>
-          <Elements text={element.text} />
-        </Draggable>
-      ))}
+    <div className="flex h-screen bg-green-300">
+      <DndContext onDragEnd={handleDragEnd}>
+        <ElementContainer testData={testData} />
 
-      {testData.map((element) => (
-        <Droppable key={element.id} id={element.id}>
-          {parent === element.id ? (
-            <Elements text={element.text} />
-          ) : (
-            "Drop here"
-          )}
-        </Droppable>
-      ))}
-    </DndContext>
+        {testData.map((element) => (
+          <Droppable key={element.id} id={element.id}>
+            {parent === element.id ? (
+              <Elements text={element.text} id={element.id} />
+            ) : (
+              "Drop here"
+            )}
+            <DropArea />
+          </Droppable>
+        ))}
+      </DndContext>
+    </div>
   );
 
   function handleDragEnd(event) {
