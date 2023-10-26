@@ -8,7 +8,6 @@ export default function Element({ note }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: note.id,
   });
-
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
