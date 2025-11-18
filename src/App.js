@@ -8,8 +8,8 @@ import FanController from "./components/FanController";
 import SmartLight from "./components/SmartLight";
 import WaterLeakDetector from "./components/WaterLeakDetector";
 import WiFiModule from "./components/WiFiModule";
-import SmartPlug from "./components/SmartPlug"
-import Configuration from "./components/Configuration"
+import SmartPlug from "./components/SmartPlug";
+import Configuration from "./components/Configuration";
 
 // setting default position
 const position = {
@@ -23,8 +23,8 @@ const COMPONENT_MAP = {
   FaLightbulb: SmartLight,
   FaWater: WaterLeakDetector,
   FaWifi: WiFiModule,
-  FaPlug:SmartPlug,
-  FaCogs:Configuration,
+  FaPlug: SmartPlug,
+  FaCogs: Configuration,
 };
 
 const notesData = [
@@ -97,28 +97,76 @@ export default function App() {
   const [notes, setNotes] = useState(notesData);
   const [droppedComponents, setDroppedComponents] = useState([]);
 
+  // Reset position of a note element
+  const resetPosition = (noteId) => {
+    setNotes((prevNotes) =>
+      prevNotes.map((note) =>
+        note.id === noteId ? { ...note, position: { x: 0, y: 0 } } : note
+      )
+    );
+  };
+
   function handleDragEnd(ev) {
     const note = notes.find((x) => x.id === ev.active.id);
+    if (!note) return;
 
-    if (ev.over) {
+    // Only add component if dropped in the drop area and not already added
+    if (ev.over && ev.over.id === "container1") {
       const Component = COMPONENT_MAP[note.icon.name];
       if (Component) {
-        setDroppedComponents((prev) => [...prev, <Component key={note.id} />]);
+        // Check if component already exists to prevent duplicates
+        const componentId = `${note.icon.name}-${Date.now()}`;
+        setDroppedComponents((prev) => [
+          ...prev,
+          {
+            id: componentId,
+            type: note.icon.name,
+            Component: Component,
+            noteId: note.id,
+          },
+        ]);
       }
     }
 
-    note.position.x += ev.over ? ev.delta.x : 0;
-    note.position.y += ev.over ? ev.delta.y : 0;
-
-    setNotes([...notes]);
+    // Reset note position after drop
+    if (ev.over && ev.over.id === "container1") {
+      setNotes((prevNotes) =>
+        prevNotes.map((n) =>
+          n.id === note.id ? { ...n, position: { x: 0, y: 0 } } : n
+        )
+      );
+    }
   }
 
+  // Remove a dropped component
+  const removeComponent = (componentId) => {
+    setDroppedComponents((prev) =>
+      prev.filter((comp) => comp.id !== componentId)
+    );
+  };
+
   return (
-    <div className="flex h-full flex-left">
+    <div className="flex h-screen w-full">
       <DndContext onDragEnd={handleDragEnd}>
-        <ElementContainer notes={notes} />
-        <DropArea id="container1">
-          {droppedComponents.map((component) => component)}
+        <ElementContainer notes={notes} resetPosition={resetPosition} />
+        <DropArea id="container1" onRemoveComponent={removeComponent} isEmpty={droppedComponents.length === 0}>
+          <div className="flex flex-wrap gap-4 p-4">
+            {droppedComponents.map((item) => {
+              const { Component, id } = item;
+              return (
+                <div key={id} className="relative">
+                  <button
+                    onClick={() => removeComponent(id)}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs z-10 hover:bg-red-600"
+                    title="Remove component"
+                  >
+                    ×
+                  </button>
+                  <Component />
+                </div>
+              );
+            })}
+          </div>
         </DropArea>
       </DndContext>
     </div>

@@ -29,8 +29,8 @@ export default function SmartLight() {
   };
 
   return (
-    <div className="smart-light-settings p-4 bg-gray-100 w-80 h-[50rem] rounded-md shadow-md">
-      <h2 className="text-lg font-bold mb-4">Smart Light Settings</h2>
+    <div className="smart-light-settings p-4 bg-white w-80 min-h-[500px] max-h-[600px] overflow-y-auto rounded-md shadow-lg">
+      <h2 className="text-lg font-bold mb-4">Smart Light</h2>
 
       {/* Light Intensity Control */}
       <div className="mb-4">
@@ -47,9 +47,19 @@ export default function SmartLight() {
 
       {/* Color Control */}
       <div className="mb-4">
-        <label className="block text-sm font-medium">Color Control</label>
-        <SketchPicker color={color} onChangeComplete={handleColorChange} />
-        <p className="mt-2">Selected Color: <span style={{ backgroundColor: color, padding: '0.3rem 0.5rem', borderRadius: '4px', color: '#000' }}>{color}</span></p>
+        <label className="block text-sm font-medium mb-2">Color Control</label>
+        <div className="flex items-center space-x-2 mb-2">
+          <div 
+            className="w-12 h-12 rounded border-2 border-gray-300"
+            style={{ backgroundColor: color }}
+          />
+          <span className="text-sm font-mono">{color}</span>
+        </div>
+        <SketchPicker 
+          color={color} 
+          onChangeComplete={handleColorChange}
+          width="100%"
+        />
       </div>
 
       {/* Scheduling */}
@@ -92,7 +102,7 @@ export default function SmartLight() {
       </div>
 
       {/* Save Settings Button */}
-      <button className="px-4 py-2 bg-green-500 text-white rounded-md">
+      <button className="w-full px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md font-medium transition-colors">
         Save Settings
       </button>
     </div>

@@ -33,56 +33,79 @@ export default function WiFiModule() {
   };
 
   return (
-    <div className="bg-green-200 p-4 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold">WiFi Module</h2>
+    <div className="bg-white p-4 w-80 rounded-lg shadow-lg">
+      <h2 className="text-xl font-bold mb-4">WiFi Module</h2>
 
       {/* Connection Status */}
-      <div className="mt-4">
-        <p className={`text-lg ${connectionStatus === 'Connected' ? 'text-green-600' : 'text-red-600'}`}>
-          Connection Status: {connectionStatus}
-        </p>
-        <p>Signal Strength: {signalStrength}%</p>
-        {connectionStatus === 'Connected' && signalStrength > 50 && (
-          <div className="bg-green-400 h-2 w-full rounded"></div>
-        )}
-        {connectionStatus === 'Connected' && signalStrength <= 50 && (
-          <div className="bg-yellow-400 h-2 w-full rounded"></div>
-        )}
-        {connectionStatus === 'Disconnected' && (
-          <div className="bg-red-400 h-2 w-full rounded"></div>
-        )}
+      <div className="mt-4 p-3 bg-gray-50 rounded-md">
+        <div className="flex items-center justify-between mb-2">
+          <p className={`text-lg font-semibold ${connectionStatus === 'Connected' ? 'text-green-600' : connectionStatus === 'Reconnecting...' ? 'text-yellow-600' : 'text-red-600'}`}>
+            Status: {connectionStatus}
+          </p>
+          {connectionStatus === 'Connected' && (
+            <span className="text-green-500 text-xl">●</span>
+          )}
+        </div>
+        <p className="text-sm mb-2">Signal Strength: {signalStrength}%</p>
+        <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+          {connectionStatus === 'Connected' && signalStrength > 50 && (
+            <div 
+              className="bg-green-500 h-full rounded-full transition-all duration-300"
+              style={{ width: `${signalStrength}%` }}
+            ></div>
+          )}
+          {connectionStatus === 'Connected' && signalStrength <= 50 && (
+            <div 
+              className="bg-yellow-500 h-full rounded-full transition-all duration-300"
+              style={{ width: `${signalStrength}%` }}
+            ></div>
+          )}
+          {connectionStatus === 'Disconnected' && (
+            <div className="bg-red-500 h-full rounded-full w-full"></div>
+          )}
+        </div>
       </div>
 
       {/* Network Information */}
-      <div className="mt-4">
-        <h3 className="text-lg">Network Information:</h3>
-        <p>SSID: {networkInfo.SSID}</p>
-        <p>IP Address: {networkInfo.IP}</p>
-        <p>MAC Address: {networkInfo.MAC}</p>
+      <div className="mt-4 p-3 bg-gray-50 rounded-md">
+        <h3 className="text-md font-semibold mb-2">Network Information</h3>
+        <div className="space-y-1 text-sm">
+          <p><span className="font-medium">SSID:</span> {networkInfo.SSID}</p>
+          <p><span className="font-medium">IP Address:</span> {networkInfo.IP}</p>
+          <p><span className="font-medium">MAC Address:</span> <span className="font-mono text-xs">{networkInfo.MAC}</span></p>
+        </div>
       </div>
 
       {/* Connected Devices */}
-      <div className="mt-4">
-        <h3 className="text-lg">Connected Devices:</h3>
-        <ul className="list-disc ml-5">
+      <div className="mt-4 p-3 bg-gray-50 rounded-md">
+        <h3 className="text-md font-semibold mb-2">Connected Devices ({connectedDevices.length})</h3>
+        <ul className="space-y-2">
           {connectedDevices.map((device, index) => (
-            <li key={index} className={`mt-2 ${device.status === 'Online' ? 'text-green-600' : 'text-red-600'}`}>
-              {device.name}: {device.status}
+            <li key={index} className="flex items-center justify-between text-sm">
+              <span>{device.name}</span>
+              <span className={`px-2 py-1 rounded text-xs font-medium ${
+                device.status === 'Online' 
+                  ? 'bg-green-100 text-green-700' 
+                  : 'bg-red-100 text-red-700'
+              }`}>
+                {device.status}
+              </span>
             </li>
           ))}
         </ul>
       </div>
 
       {/* Reconnect/Reset Controls */}
-      <div className="mt-4">
+      <div className="mt-4 space-y-2">
         <button
-          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md"
+          className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md font-medium transition-colors"
           onClick={handleReconnect}
+          disabled={connectionStatus === 'Reconnecting...'}
         >
-          Reconnect WiFi
+          {connectionStatus === 'Reconnecting...' ? 'Reconnecting...' : 'Reconnect WiFi'}
         </button>
         <button
-          className="mt-2 px-4 py-2 bg-red-500 text-white rounded-md ml-4"
+          className="w-full px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md font-medium transition-colors"
           onClick={handleReset}
         >
           Reset WiFi Module

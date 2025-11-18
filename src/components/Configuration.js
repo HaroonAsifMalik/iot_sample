@@ -44,21 +44,24 @@ export default function Configuration() {
   };
 
   return (
-    <div className="bg-gray-100 p-4 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold">Configuration Panel</h2>
+    <div className="bg-white p-4 w-80 rounded-lg shadow-lg">
+      <h2 className="text-xl font-bold mb-4">Configuration Panel</h2>
 
       {/* Settings Panel */}
-      <div className="mt-4">
-        <h3 className="text-lg font-semibold">Connected Devices:</h3>
-        <ul className="list-disc list-inside">
+      <div className="mt-4 p-3 bg-gray-50 rounded-md">
+        <h3 className="text-md font-semibold mb-3">Connected Devices</h3>
+        <ul className="space-y-2">
           {devices.map((device) => (
-            <li key={device.id} className="mt-2">
-              {device.name} (Firmware: {device.firmware})
+            <li key={device.id} className="flex items-center justify-between p-2 bg-white rounded border">
+              <div>
+                <p className="text-sm font-medium">{device.name}</p>
+                <p className="text-xs text-gray-500">Firmware: {device.firmware}</p>
+              </div>
               <button
-                className="ml-4 px-2 py-1 bg-blue-500 text-white rounded-md"
+                className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-xs font-medium transition-colors"
                 onClick={() => handleFirmwareUpdate(device.id)}
               >
-                Update Firmware
+                Update
               </button>
             </li>
           ))}
@@ -66,62 +69,74 @@ export default function Configuration() {
       </div>
 
       {/* Device Grouping */}
-      <div className="mt-6">
-        <h3 className="text-lg font-semibold">Group Devices:</h3>
-        <div className="mt-2">
-          <label className="block">
-            Select Group Type:
-            <select
-              className="border rounded p-1 mt-1"
-              onChange={(e) => {
-                const deviceId = devices[0].id; // Simulating grouping the first device for now
-                handleGroupDevice(deviceId, e.target.value, "LivingRoom");
-              }}
-            >
+      <div className="mt-4 p-3 bg-gray-50 rounded-md">
+        <h3 className="text-md font-semibold mb-3">Device Grouping</h3>
+        <div className="space-y-3">
+          <div>
+            <label className="block text-sm font-medium mb-1">Select Device</label>
+            <select className="border rounded-md p-2 w-full text-sm">
+              {devices.map((device) => (
+                <option key={device.id} value={device.id}>{device.name}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Group Type</label>
+            <select className="border rounded-md p-2 w-full text-sm">
               <option value="rooms">Room</option>
               <option value="scenes">Scene</option>
             </select>
-          </label>
+          </div>
         </div>
 
         <div className="mt-4">
-          <h4 className="text-md font-semibold">Grouped Devices:</h4>
-          <p>Rooms:</p>
-          <ul className="list-inside list-disc">
-            {Object.keys(groupedDevices.rooms).map((room) => (
-              <li key={room}>
-                {room}: {groupedDevices.rooms[room].length} devices
-              </li>
-            ))}
-          </ul>
+          <h4 className="text-sm font-semibold mb-2">Grouped Devices</h4>
+          <div className="space-y-2">
+            <div>
+              <p className="text-xs font-medium text-gray-600 mb-1">Rooms:</p>
+              <ul className="space-y-1">
+                {Object.keys(groupedDevices.rooms).map((room) => (
+                  <li key={room} className="text-xs bg-white p-2 rounded border">
+                    {room}: <span className="font-medium">{groupedDevices.rooms[room].length}</span> device(s)
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          <p className="mt-2">Scenes:</p>
-          <ul className="list-inside list-disc">
-            {Object.keys(groupedDevices.scenes).map((scene) => (
-              <li key={scene}>
-                {scene}: {groupedDevices.scenes[scene].length} devices
-              </li>
-            ))}
-          </ul>
+            <div className="mt-2">
+              <p className="text-xs font-medium text-gray-600 mb-1">Scenes:</p>
+              <ul className="space-y-1">
+                {Object.keys(groupedDevices.scenes).map((scene) => (
+                  <li key={scene} className="text-xs bg-white p-2 rounded border">
+                    {scene}: <span className="font-medium">{groupedDevices.scenes[scene].length}</span> device(s)
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Backup & Restore */}
-      <div className="mt-6">
-        <h3 className="text-lg font-semibold">Backup & Restore Configuration:</h3>
-        <div className="mt-2">
+      <div className="mt-4 p-3 bg-gray-50 rounded-md">
+        <h3 className="text-md font-semibold mb-3">Backup & Restore</h3>
+        <div className="space-y-2">
           <button
-            className="px-4 py-2 bg-green-500 text-white rounded-md"
+            className="w-full px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md font-medium transition-colors"
             onClick={handleBackup}
           >
             Backup Settings
           </button>
           <button
-            className="ml-4 px-4 py-2 bg-yellow-500 text-white rounded-md"
+            className="w-full px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md font-medium transition-colors"
             onClick={handleRestore}
+            disabled={!backupConfig}
           >
             Restore Settings
           </button>
+          {backupConfig && (
+            <p className="text-xs text-gray-500 text-center mt-2">Backup available</p>
+          )}
         </div>
       </div>
     </div>

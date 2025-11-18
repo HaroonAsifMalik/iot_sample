@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useDraggable } from "@dnd-kit/core";
-import { FaTimes } from "react-icons/fa"; // Import the cross icon
+import { FaTimes } from "react-icons/fa";
 
 const combinedClassName =
-  "bg-green-300 justify-center flex rounded-md p-3 m-2 relative";
+  "bg-green-300 justify-center items-center flex rounded-md p-3 m-2 relative cursor-move hover:bg-green-400 transition-colors";
 
 export default function Element({
   note,
@@ -12,55 +12,54 @@ export default function Element({
   description,
   resetPosition,
 }) {
-  const { attributes, listeners, setNodeRef, transform, setActivatorNodeRef } = useDraggable({
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: note.id,
   });
 
-  // Clear transform style when position is reset to avoid dragging offset issues
-  const style = transform && note.position.x === 0 && note.position.y === 0 
-    ? {}
-    : transform
+  const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        opacity: isDragging ? 0.5 : 1,
       }
-    : {};
+    : {
+        opacity: isDragging ? 0.5 : 1,
+      };
 
-  useEffect(() => {
-    // Reset the draggable transform when the position is reset
-    if (note.position.x === 0 && note.position.y === 0) {
-      setActivatorNodeRef(null); // Reset draggable state
+  const handleResetClick = (e) => {
+    e.stopPropagation();
+    if (resetPosition) {
+      resetPosition(note.id);
     }
-  }, [note.position, setActivatorNodeRef]);
+  };
 
   return (
     <div
       ref={setNodeRef}
-      style={{
-        ...style,
-        position: "relative",
-        left: note.position.x,
-        top: note.position.y,
-      }}
+      style={style}
       className={combinedClassName}
       {...listeners}
       {...attributes}
-      title={hoverText} // Hover text displayed when mouse is over the element
+      title={hoverText}
     >
       {/* Render the passed icon */}
-      <Icon className="mr-2" />
+      <Icon className="mr-2 text-xl" />
+      <span className="text-sm font-medium">{hoverText}</span>
 
       {/* Cross icon for resetting the element position */}
-      {note.position.x !== 0 || note.position.y !== 0 ? (
-        <div
-          onClick={() => resetPosition(note.id)}
-          className="absolute top-0 right-0 bg-black rounded-full p-1 cursor-pointer"
+      {(note.position.x !== 0 || note.position.y !== 0) && resetPosition && (
+        <button
+          onClick={handleResetClick}
+          className="absolute top-0 right-0 bg-black rounded-full p-1 cursor-pointer hover:bg-red-600 transition-colors z-10"
+          title="Reset position"
         >
-          <FaTimes className="text-white" />
-        </div>
-      ) : null}
+          <FaTimes className="text-white text-xs" />
+        </button>
+      )}
 
-      {/* Optional description */}
-      <p className="hidden hover:block text-xs">{description}</p>
+      {/* Description tooltip */}
+      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded px-2 py-1 whitespace-nowrap">
+        {description}
+      </div>
     </div>
   );
 }

@@ -1,23 +1,28 @@
 import React from "react";
 import { useDroppable } from "@dnd-kit/core";
-export default function DropArea({ children, id, className }) {
+
+export default function DropArea({ children, id, className, onRemoveComponent, isEmpty }) {
   const { isOver, setNodeRef } = useDroppable({
     id: id,
   });
-  const style = {
-    color: isOver ? "green" : undefined,
-  };
 
   return (
     <div
       ref={setNodeRef}
-      style={{ ...style }}
-      className="w-full p-2 bg-red-300  text-2xl h-screen flex-left "
+      className={`flex-1 h-screen overflow-y-auto ${
+        isOver ? "bg-green-200" : "bg-gray-100"
+      } transition-colors duration-200 ${className || ""}`}
     >
-      <h1 className="justify-center text-xl flex p-3 m-3">
-        This Area for Dropping Notes
+      <h1 className="text-xl font-bold text-center p-4 border-b-2 border-gray-300 sticky top-0 bg-inherit z-10">
+        Dashboard - Drop IoT Components Here
       </h1>
-      {children}
+      {isEmpty ? (
+        <div className="flex items-center justify-center h-full text-gray-400">
+          <p className="text-lg">Drag and drop IoT components from the sidebar</p>
+        </div>
+      ) : (
+        children
+      )}
     </div>
   );
 }
