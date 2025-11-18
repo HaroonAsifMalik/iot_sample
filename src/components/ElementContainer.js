@@ -1,15 +1,21 @@
 import Element from "./Element";
-function ElementContainer(props) {
-  const { notes } = props;
-  return (
-    <div className="bg-yellow-300 h-screen col-span-2">
-      <h1 className="justify-center text-xl flex p-3 m-3">
-        The Elements Container Box
-      </h1>
 
-      <div className="grid  grid-cols-2 p-3">
+function ElementContainer({ notes, resetPosition }) {
+  return (
+    <div className="bg-yellow-300 h-screen w-80 overflow-y-auto flex-shrink-0">
+      <h1 className="text-xl font-bold text-center p-4 border-b-2 border-yellow-400">
+        IoT Elements
+      </h1>
+      <div className="p-3 space-y-2">
         {notes.map((note) => (
-          <Element key={note.id} note={note} />
+          <Element
+            key={note.id}
+            note={note}
+            icon={note.icon}
+            hoverText={note.hoverText}
+            description={note.description}
+            resetPosition={resetPosition}
+          />
         ))}
       </div>
     </div>
